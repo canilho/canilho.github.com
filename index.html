@@ -1,0 +1,163 @@
+<!DOCTYPE HTML>
+<html><head>
+<title>
+Canilho Animation Effects
+</title>
+<style>
+html, body {
+	width:  100%;
+	height: 100%;
+	margin: 0px auto;
+	padding: 0px;
+    text-align:center;  
+	background:#002233;
+  }   
+canvas{  
+    margin-top:0.7%;
+	outline:0;
+    border:3px dotted #F00;  
+	border-radius:50px;
+    margin-left: auto;  
+    margin-right: auto;  
+  }  
+  h1{
+  	position:absolute;
+  	top: 0px;
+  	left: 25px;
+  	color: white;
+  }
+  .title{
+  	background-color: #002233;
+  	border-radius: 25px;
+  }
+</style>
+</head>
+<body>
+<div class="title"><h1> CANILHO.COM</h1></div>
+<script type="text/javascript">
+
+
+var c = document.createElement('canvas');
+c.id="myCanvas";
+document.body.appendChild(c);
+var x = c.getContext("2d");
+var w=0,h=0,
+	mX=0,mY=0,
+	xC=0,yC=0,
+	key="C",
+	t=1;
+
+resize(4,3);
+
+function clear(){
+	x.fillStyle="orange";
+	x.fillRect(0,0,w,h);
+}
+
+function resize(wp,hp) {
+	var iw = innerWidth;
+	var ih = innerHeight;
+	if(iw/wp > ih/hp){
+		c.height = h = ih - ih*0.07;
+		c.width = w =(h/hp) *wp;
+	} else{
+		c.width = w = iw - iw*0.05;
+		c.height = h =(w/wp) *hp;
+	}
+}
+
+document.onselectstart = function () { return false; }
+
+function getMousePos(c, evt) {
+	var rect = c.getBoundingClientRect();
+	var root = document.documentElement;
+	mX = ~~(evt.clientX - rect.left - root.scrollLeft);
+	mY = ~~(evt.clientY - rect.top - root.scrollTop);
+    return {
+		x: mX,
+		y: mY
+	};
+}
+
+c.addEventListener('mousemove', function (evt) {
+	var mousePos = getMousePos(c, evt);
+}, true);
+
+window.onclick = function(e){
+	var rect = c.getBoundingClientRect(), 
+	root = document.documentElement;
+	xC = ~~(e.pageX - rect.left - root.scrollLeft);
+	yC = ~~(e.pageY - rect.top - root.scrollTop);
+}
+
+var message ="Press any key .. ";
+function doKeyDown(evt){
+	switch(evt.keyCode){
+		default:
+			message=''+evt.keyCode;
+			break;
+	}
+	key=String.fromCharCode(message);
+}
+window.addEventListener('keydown',doKeyDown,true);
+
+var lc =[];
+
+function info(){
+	x.save();
+	x.fillStyle="black";
+	x.font="2vw Courier,Arial";
+	x.fillText("mX:"+mX+" mY:"+mY,30,30);
+	x.fillText("cX:"+xC+" cY:"+yC,30,50);
+	x.fillText("k:"+key+ " msg:"+message,30,70);
+	x.fillText("c++:"+t,30,90);
+	x.restore();
+}
+
+function rot(){
+	x.save();
+	var obj_s=w/4;
+	x.translate(w/2,h/2);
+	//x.rotate(t*0.01);
+	x.rotate(Math.sin(t*0.03+Math.sin(t*0.04)));
+	x.fillStyle="black";
+	x.fillRect(-obj_s/2,-obj_s/2,obj_s,obj_s);
+	x.font= w/6 + "px Courier,Arial";
+	x.strokeStyle = x.fillStyle="white";
+	x.fillText(""+key,0-x.measureText(""+key).width/2,25);
+	x.font= w/20 + "px Courier,Arial";
+	x.strokeText("Under Construction",0-x.measureText("Under Construction").width/2,55);
+  x.font= w/30 + "px Courier,Arial";
+  x.strokeText("canilho.com",0-x.measureText("canilho.com").width/2,85);
+	x.restore();
+}
+
+function drawIT(){
+	resize(4,3);
+	clear();
+	info();
+	rot();
+	if(xC!=0 && yC!=0)
+	lc.push([xC,yC]);
+	xC=yC=0;
+	t++;
+}
+
+window.requestAnimFrame = (function() {
+    return window.requestAnimationFrame ||
+      window.webkitRequestAnimationFrame ||
+      window.mozRequestAnimationFrame ||
+      function(callback) {
+        window.setTimeout(callback, 60);
+      };
+  })();
+
+  (function animloop() {
+    requestAnimFrame(animloop);
+    drawIT();
+  })();
+
+
+</script>
+</body>
+</html>
